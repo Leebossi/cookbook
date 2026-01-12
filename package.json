@@ -1,0 +1,24 @@
+{
+  "name": "cookbook-backend",
+  "version": "0.0.1",
+  "description": "Express backend for cookbook application",
+  "homepage": "https://github.com/Leebossi/cookbook#readme",
+  "bugs": {
+    "url": "https://github.com/Leebossi/cookbook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leebossi/cookbook.git"
+  },
+  "license": "MIT",
+  "author": "Leevi Ossi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
