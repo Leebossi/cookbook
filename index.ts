@@ -42,6 +42,16 @@ app.get("/recipe", async (_req, res) => {
   res.json(recipes);
 });
 
+app.get("/recipe/:id", async (req, res) => {
+  const recipe = await Recipe.findByPk(req.params.id);
+  if (recipe) {
+    console.log(recipe.toJSON());
+    res.json(recipe);
+  } else {
+    res.status(404).json({ error: "Recipe not found" });
+  }
+});
+
 app.post("/recipe", async (req, res) => {
   try {
     const recipe = await Recipe.create(req.body);
