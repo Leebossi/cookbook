@@ -42,6 +42,15 @@ app.get("/recipe", async (_req, res) => {
   res.json(recipes);
 });
 
+app.post("/recipe", async (req, res) => {
+  try {
+    const recipe = await Recipe.create(req.body);
+    return res.json(recipe);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
