@@ -27,4 +27,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const recipe = await Recipe.findByPk(req.params.id);
+  if (recipe) {
+    await recipe.update(req.body);
+    res.json(recipe);
+  } else {
+    res.status(404).json({ error: "Recipe not found" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const recipe = await Recipe.findByPk(req.params.id);
+  if (recipe) {
+    await recipe.destroy();
+    res.status(204).end();
+  } else {
+    res.status(404).json({ error: "Recipe not found" });
+  }
+});
+
 export default router;
