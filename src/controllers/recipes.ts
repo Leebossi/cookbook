@@ -23,7 +23,10 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const recipeRepository = AppDataSource.getRepository(Recipe);
-  const recipe = await recipeRepository.findOneBy({ id: parseInt(req.params.id) });
+  const recipe = await recipeRepository.findOne({
+    where: { id: parseInt(req.params.id) },
+    relations: ["ingredients"],
+  });
   if (recipe) {
     console.log(recipe);
     res.json(recipe);
