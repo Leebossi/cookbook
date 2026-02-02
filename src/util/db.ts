@@ -7,7 +7,7 @@ export const AppDataSource = new DataSource({
   type: "postgres",
   url: config.DATABASE_URL,
   entities: [Recipe],
-  synchronize: false,
+  synchronize: true,
   logging: false,
 });
 
