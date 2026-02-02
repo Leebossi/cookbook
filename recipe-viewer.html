@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #ffffff;
+            color: #000;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border: 4px solid #000;
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: #000;
+            color: #fff;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 4px solid #000;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .search-section {
+            padding: 30px;
+            background: #fff;
+            display: flex;
+            gap: 15px;
+            border-bottom: 4px solid #000;
+        }
+
+        .search-section input {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid #000;
+            background: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .search-section input:focus {
+            outline: none;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .search-section button {
+            padding: 15px 30px;
+            background: #000;
+            color: #fff;
+            border: 3px solid #000;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 1em;
+            text-transform: uppercase;
+            transition: all 0.1s;
+        }
+
+        .search-section button:hover {
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+            transform: translate(-2px, -2px);
+        }
+
+        .search-section button:active {
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+            transform: translate(0, 0);
+        }
+
+        .content {
+            padding: 40px;
+            background: #fff;
+        }
+
+        .recipe {
+            display: none;
+        }
+
+        .recipe.active {
+            display: block;
+        }
+
+        .recipe-title {
+            font-size: 2.5em;
+            color: #000;
+            margin-bottom: 5px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .recipe-type {
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 4px solid #000;
+            background: #f5f5f5;
+        }
+
+        .section h2 {
+            color: #000;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ingredients-list {
+            list-style: none;
+        }
+
+        .ingredients-list li {
+            padding: 15px;
+            background: #fff;
+            margin-bottom: 12px;
+            border: 3px solid #000;
+            border-radius: 0;
+            font-weight: bold;
+        }
+
+        .ingredients-list strong {
+            color: #000;
+            font-size: 1.1em;
+        }
+
+        .instructions-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .instructions-list li {
+            padding: 20px;
+            background: #fff;
+            margin-bottom: 15px;
+            border: 3px solid #000;
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 60px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .instructions-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            background: #000;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: #ffcccc;
+            color: #000;
+            padding: 20px;
+            border: 4px solid #000;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #000;
+            border-top: 4px solid transparent;
+            border-radius: 0;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #555;
+        }
+
+        .empty-state p {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍝 Recipe Viewer</h1>
+            <p>View recipes with ingredients and instructions</p>
+        </div>
+
+        <div class="search-section">
+            <input 
+                type="number" 
+                id="recipeId" 
+                placeholder="Enter Recipe ID..." 
+                min="1"
+                value="1"
+            >
+            <button onclick="fetchRecipe()">View Recipe</button>
+        </div>
+
+        <div class="content">
+            <div class="error" id="error"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <p>👉 Enter a recipe ID and click "View Recipe" to get started</p>
+            </div>
+
+            <div class="recipe" id="recipe">
+                <div class="recipe-title" id="recipeName"></div>
+                <div class="recipe-type" id="recipeType"></div>
+
+                <div class="section" id="ingredientsSection">
+                    <h2>Ingredients</h2>
+                    <ul class="ingredients-list" id="ingredientsList"></ul>
+                </div>
+
+                <div class="section" id="instructionsSection">
+                    <h2>Instructions</h2>
+                    <ol class="instructions-list" id="instructionsList"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+
+        async function fetchRecipe() {
+            const recipeId = document.getElementById('recipeId').value;
+            const errorDiv = document.getElementById('error');
+            const loadingDiv = document.getElementById('loading');
+            const emptyState = document.getElementById('emptyState');
+            const recipeDiv = document.getElementById('recipe');
+
+            if (!recipeId) {
+                showError('Please enter a recipe ID');
+                return;
+            }
+
+            try {
+                errorDiv.classList.remove('active');
+                loadingDiv.classList.add('active');
+                emptyState.classList.remove('active');
+                recipeDiv.classList.remove('active');
+
+                const response = await fetch(`${API_BASE}/recipes/${recipeId}`);
+                if (!response.ok) {
+                    throw new Error('Recipe not found');
+                }
+
+                const recipe = await response.json();
+                displayRecipe(recipe);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loadingDiv.classList.remove('active');
+            }
+        }
+
+        function displayRecipe(recipe) {
+            document.getElementById('recipeName').textContent = recipe.name;
+            document.getElementById('recipeType').textContent = recipe.type || 'Recipe';
+
+            // Display Ingredients
+            const ingredientsList = document.getElementById('ingredientsList');
+            ingredientsList.innerHTML = '';
+            if (recipe.ingredients && recipe.ingredients.length > 0) {
+                recipe.ingredients.forEach(ing => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${ing.amount} ${ing.unit}</strong> ${ing.name}`;
+                    ingredientsList.appendChild(li);
+                });
+            } else {
+                ingredientsList.innerHTML = '<li>No ingredients listed</li>';
+            }
+
+            // Display Instructions
+            const instructionsList = document.getElementById('instructionsList');
+            instructionsList.innerHTML = '';
+            if (recipe.instructions && recipe.instructions.length > 0) {
+                recipe.instructions
+                    .sort((a, b) => a.step - b.step)
+                    .forEach(inst => {
+                        const li = document.createElement('li');
+                        li.textContent = inst.instruction;
+                        instructionsList.appendChild(li);
+                    });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'No instructions listed';
+                instructionsList.appendChild(li);
+            }
+
+            // Hide/show sections
+            document.getElementById('ingredientsSection').style.display = 
+                recipe.ingredients && recipe.ingredients.length > 0 ? 'block' : 'none';
+            document.getElementById('instructionsSection').style.display = 
+                recipe.instructions && recipe.instructions.length > 0 ? 'block' : 'none';
+
+            document.getElementById('recipe').classList.add('active');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.classList.add('active');
+        }
+
+        // Allow Enter key to fetch recipe
+        document.getElementById('recipeId').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fetchRecipe();
+            }
+        });
+    </script>
+</body>
+</html>
