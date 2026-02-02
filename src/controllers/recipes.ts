@@ -25,7 +25,7 @@ router.get("/:id", async (req, res) => {
   const recipeRepository = AppDataSource.getRepository(Recipe);
   const recipe = await recipeRepository.findOne({
     where: { id: parseInt(req.params.id) },
-    relations: ["ingredients"],
+    relations: ["ingredients", "instructions"],
   });
   if (recipe) {
     console.log(recipe);
