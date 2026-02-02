@@ -1,16 +1,20 @@
 import { Router } from "express";
+import { AppDataSource } from "../util/db";
 import Recipe from "../models/recipe";
 
 const router = Router();
 
 router.get("/", async (_req, res) => {
-  const recipes = await Recipe.findAll();
+  const recipeRepository = AppDataSource.getRepository(Recipe);
+  const recipes = await recipeRepository.find();
   res.json(recipes);
 });
 
 router.post("/", async (req, res) => {
   try {
-    const recipe = await Recipe.create(req.body);
+    const recipeRepository = AppDataSource.getRepository(Recipe);
+    const recipe = recipeRepository.create(req.body);
+    await recipeRepository.save(recipe);
     return res.json(recipe);
   } catch (error) {
     return res.status(400).json({ error });
@@ -18,9 +22,10 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const recipe = await Recipe.findByPk(req.params.id);
+  const recipeRepository = AppDataSource.getRepository(Recipe);
+  const recipe = await recipeRepository.findOneBy({ id: parseInt(req.params.id) });
   if (recipe) {
-    console.log(recipe.toJSON());
+    console.log(recipe);
     res.json(recipe);
   } else {
     res.status(404).json({ error: "Recipe not found" });
@@ -28,9 +33,11 @@ router.get("/:id", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-  const recipe = await Recipe.findByPk(req.params.id);
+  const recipeRepository = AppDataSource.getRepository(Recipe);
+  const recipe = await recipeRepository.findOneBy({ id: parseInt(req.params.id) });
   if (recipe) {
-    await recipe.update(req.body);
+    recipeRepository.merge(recipe, req.body);
+    await recipeRepository.save(recipe);
     res.json(recipe);
   } else {
     res.status(404).json({ error: "Recipe not found" });
@@ -38,9 +45,10 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  const recipe = await Recipe.findByPk(req.params.id);
+  const recipeRepository = AppDataSource.getRepository(Recipe);
+  const recipe = await recipeRepository.findOneBy({ id: parseInt(req.params.id) });
   if (recipe) {
-    await recipe.destroy();
+    await recipeRepository.remove(recipe);
     res.status(204).end();
   } else {
     res.status(404).json({ error: "Recipe not found" });

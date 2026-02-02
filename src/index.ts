@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express from "express";
 import config from "./util/config";
 import connectToDatabase from "./util/db";

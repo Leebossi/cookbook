@@ -1,31 +1,15 @@
-const { sequelize } = require("../util/db");
-import { Model, DataTypes } from "sequelize";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-class Recipe extends Model {}
+@Entity({ name: "recipe" })
+class Recipe {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-Recipe.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    type: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-  },
-  {
-    sequelize,
-    underscored: true,
-    modelName: "recipe",
-    tableName: "recipe",
-    timestamps: false,
-  }
-);
+  @Column()
+  name!: string;
+
+  @Column({ type: "varchar", nullable: true })
+  type: string | null;
+}
 
 export default Recipe;

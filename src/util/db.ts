@@ -1,11 +1,19 @@
-import { Sequelize } from "sequelize";
+import "reflect-metadata";
+import { DataSource } from "typeorm";
 import config from "./config";
+import Recipe from "../models/recipe";
 
-export const sequelize = new Sequelize(config.DATABASE_URL);
+export const AppDataSource = new DataSource({
+  type: "postgres",
+  url: config.DATABASE_URL,
+  entities: [Recipe],
+  synchronize: false,
+  logging: false,
+});
 
 const connectToDatabase = async () => {
   try {
-    await sequelize.authenticate();
+    await AppDataSource.initialize();
     console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
@@ -15,4 +23,4 @@ const connectToDatabase = async () => {
   return null;
 };
 
-export default connectToDatabase; sequelize;
+export default connectToDatabase;

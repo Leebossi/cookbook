@@ -8,6 +8,9 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false
   }
 }
