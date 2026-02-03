@@ -7,10 +7,14 @@ import Instruction from "../models/instruction";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  url: config.DATABASE_URL,
+  host: config.DB_HOST,
+  port: config.DB_PORT,
+  username: config.DB_USERNAME,
+  password: config.DB_PASSWORD,
+  database: config.DB_NAME,
   entities: [Recipe, Ingredient, Instruction],
   synchronize: true,
-  logging: false,
+  logging: true,
 });
 
 const connectToDatabase = async () => {
