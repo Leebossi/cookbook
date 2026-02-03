@@ -1,26 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity } from "typeorm";
 import Recipe from "./recipe";
 
 @Entity({ name: "ingredient" })
-class Ingredient {
+class Ingredient extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column()
-  name!: string;
+  name: string;
 
   @Column({ type: "float" })
-  amount!: number;
+  amount: number;
 
   @Column()
-  unit!: string;
+  unit: string;
 
   @ManyToOne(() => Recipe, (recipe) => recipe.ingredients, { onDelete: "CASCADE" })
   @JoinColumn({ name: "recipeId" })
-  recipe!: Recipe;
+  recipe: Recipe;
 
   @Column()
-  recipeId!: number;
+  recipeId: number;
 }
 
 export default Ingredient;

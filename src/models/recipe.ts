@@ -1,23 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
 import Ingredient from "./ingredient";
 import Instruction from "./instruction";
 
 @Entity({ name: "recipe" })
-class Recipe {
+class Recipe extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column()
-  name!: string;
+  name: string;
 
   @Column({ type: "varchar", nullable: true })
   type: string | null;
 
   @OneToMany(() => Ingredient, (ingredient) => ingredient.recipe)
-  ingredients!: Ingredient[];
+  ingredients: Ingredient[];
 
   @OneToMany(() => Instruction, (instruction) => instruction.recipe)
-  instructions!: Instruction[];
+  instructions: Instruction[];
 }
 
 export default Recipe;

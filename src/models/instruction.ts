@@ -1,23 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity } from "typeorm";
 import Recipe from "./recipe";
 
 @Entity({ name: "instruction" })
-class Instruction {
+class Instruction extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column()
-  step!: number;
+  step: number;
 
   @Column({ type: "text" })
-  instruction!: string;
+  instruction: string;
 
   @ManyToOne(() => Recipe, (recipe) => recipe.instructions, { onDelete: "CASCADE" })
   @JoinColumn({ name: "recipeId" })
-  recipe!: Recipe;
+  recipe: Recipe;
 
   @Column()
-  recipeId!: number;
+  recipeId: number;
 }
 
 export default Instruction;
