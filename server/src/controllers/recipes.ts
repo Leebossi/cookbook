@@ -3,6 +3,7 @@ import { AppDataSource } from "../util/db";
 import Recipe from "../models/recipe";
 import Ingredient from "../models/ingredient";
 import Instruction from "../models/instruction";
+import requireAuth from "../middleware/auth";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.get("/", async (_req, res) => {
   res.json(recipes);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   const { name, type, ingredients, instructions } = req.body;
 
   const recipeRepository = AppDataSource.getRepository(Recipe);
@@ -64,7 +65,7 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const recipeRepository = AppDataSource.getRepository(Recipe);
   const recipe = await recipeRepository.findOne({
-    where: { id: parseInt(req.params.id) },
+    where: { id: parseInt(req.params.id as string) },
     relations: ["ingredients", "instructions"],
   });
   if (recipe) {
@@ -75,10 +76,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   const recipeRepository = AppDataSource.getRepository(Recipe);
   const recipe = await recipeRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
   if (recipe) {
     recipeRepository.merge(recipe, req.body);
@@ -89,10 +90,10 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   const recipeRepository = AppDataSource.getRepository(Recipe);
   const recipe = await recipeRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
   if (recipe) {
     await recipeRepository.remove(recipe);

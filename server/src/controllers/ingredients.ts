@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { AppDataSource } from "../util/db";
 import Ingredient from "../models/ingredient";
+import requireAuth from "../middleware/auth";
 
 const router = Router();
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   const ingredientRepository = AppDataSource.getRepository(Ingredient);
   const ingredient = await ingredientRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
 
   if (!ingredient) {
@@ -19,10 +20,10 @@ router.put("/:id", async (req, res) => {
   return res.json(saved);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   const ingredientRepository = AppDataSource.getRepository(Ingredient);
   const ingredient = await ingredientRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
 
   if (!ingredient) {

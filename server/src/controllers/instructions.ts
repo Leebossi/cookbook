@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { AppDataSource } from "../util/db";
 import Instruction from "../models/instruction";
+import requireAuth from "../middleware/auth";
 
 const router = Router();
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   const instructionRepository = AppDataSource.getRepository(Instruction);
   const instruction = await instructionRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
 
   if (!instruction) {
@@ -19,10 +20,10 @@ router.put("/:id", async (req, res) => {
   return res.json(saved);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   const instructionRepository = AppDataSource.getRepository(Instruction);
   const instruction = await instructionRepository.findOneBy({
-    id: parseInt(req.params.id),
+    id: parseInt(req.params.id as string),
   });
 
   if (!instruction) {

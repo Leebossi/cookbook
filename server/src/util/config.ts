@@ -8,7 +8,8 @@ const config = {
   DB_USERNAME: process.env.DB_USERNAME || "",
   DB_PASSWORD: process.env.DB_PASSWORD || "",
   DB_NAME: process.env.DB_NAME || "",
-  PORT: parseInt(process.env.PORT || "3001")
+  PORT: parseInt(process.env.PORT || "3001"),
+  API_KEY: process.env.API_KEY || ""
 };
 
 export default config;
