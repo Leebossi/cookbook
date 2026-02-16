@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import axios from "axios";
 import Login from "./Login";
+import { useNavigate } from "react-router-dom";
 
 type ParsedIngredient = {
   name: string;
@@ -61,6 +62,7 @@ const parseRecipeInput = (input: string): ParsedRecipe => {
 };
 
 export const AddRecipe = () => {
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const parsed = useMemo(() => parseRecipeInput(input), [input]);
   const [token, setToken] = useState(() =>
@@ -164,6 +166,12 @@ export const AddRecipe = () => {
     <section className="add-recipe">
       <div className="add-recipe__header">
         <h2>Add a Recipe</h2>
+        <button type="button" onClick={() => navigate("/")}>
+          Go to Home
+        </button>
+        <button type="button" onClick={() => setInput("")}>
+          clear
+        </button>
         <button
           type="button"
           onClick={handleLogout}
