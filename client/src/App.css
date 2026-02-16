@@ -73,6 +73,19 @@
   text-align: left;
 }
 
+.add-recipe__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.add-recipe__logout {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+}
+
 .add-recipe h2 {
   margin-bottom: 0.75rem;
 }
@@ -101,6 +114,24 @@
   line-height: 1.5;
 }
 
+.add-recipe__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.add-recipe__error {
+  color: #ffb4b4;
+  font-weight: 600;
+}
+
+.add-recipe__success {
+  color: #b7f5c7;
+  font-weight: 600;
+}
+
 .add-recipe__preview {
   margin-top: 1.5rem;
   padding: 1rem 1.25rem;
@@ -124,4 +155,35 @@
 .add-recipe__empty {
   opacity: 0.7;
   font-style: italic;
+}
+
+.login {
+  width: 100%;
+  max-width: 420px;
+  margin: 3rem auto;
+  text-align: left;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.login__label {
+  font-weight: 600;
+}
+
+.login__input {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+  background-color: #1c1c1c;
+  color: inherit;
+  font-size: 1rem;
+}
+
+.login__error {
+  color: #ffb4b4;
 }

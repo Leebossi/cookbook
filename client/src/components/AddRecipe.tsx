@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import axios from "axios";
+import Login from "./Login";
 
 type ParsedIngredient = {
   name: string;
@@ -61,11 +63,119 @@ const parseRecipeInput = (input: string): ParsedRecipe => {
 export const AddRecipe = () => {
   const [input, setInput] = useState("");
   const parsed = useMemo(() => parseRecipeInput(input), [input]);
+  const [token, setToken] = useState(() =>
+    localStorage.getItem("cookbook_token"),
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = (newToken: string) => {
+    localStorage.setItem("cookbook_token", newToken);
+    setToken(newToken);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("cookbook_token");
+    setToken(null);
+  };
+
+  if (!token) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  const handleCreateRecipe = async () => {
+    setError(null);
+    setSuccess(null);
+
+    if (!parsed.title.trim()) {
+      setError("Title is required.");
+      return;
+    }
+
+    const ingredients = parsed.ingredients
+      .map((ingredient) => {
+        const amount = ingredient.amount ? Number(ingredient.amount) : NaN;
+        const unit = ingredient.unit?.trim() ?? "";
+
+        if (!ingredient.name.trim() || !unit || Number.isNaN(amount)) {
+          return null;
+        }
+
+        return {
+          name: ingredient.name.trim(),
+          amount,
+          unit,
+        };
+      })
+      .filter(
+        (
+          ingredient,
+        ): ingredient is { name: string; amount: number; unit: string } =>
+          Boolean(ingredient),
+      );
+
+    const instructions = parsed.steps
+      .map((step) => step.trim())
+      .filter(Boolean)
+      .map((instruction, index) => ({
+        step: index + 1,
+        instruction,
+      }));
+
+    if (ingredients.length === 0) {
+      setError("Add at least one ingredient with amount and unit.");
+      return;
+    }
+
+    if (instructions.length === 0) {
+      setError("Add at least one instruction step.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(
+        "http://localhost:3001/api/recipes",
+        {
+          name: parsed.title.trim(),
+          type: null,
+          ingredients,
+          instructions,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setSuccess("Recipe created.");
+      setInput("");
+    } catch (error) {
+      console.error(error);
+      setError("Failed to create recipe.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="add-recipe">
-      <h2>Add a Recipe</h2>
-      <form className="add-recipe__form" onSubmit={(event) => event.preventDefault()}>
+      <div className="add-recipe__header">
+        <h2>Add a Recipe</h2>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="add-recipe__logout"
+        >
+          Log out
+        </button>
+      </div>
+      <form
+        className="add-recipe__form"
+        onSubmit={(event) => event.preventDefault()}
+      >
         <label htmlFor="recipe-input" className="add-recipe__label">
           Paste recipe text
         </label>
@@ -79,6 +189,13 @@ export const AddRecipe = () => {
           onChange={(event) => setInput(event.target.value)}
           rows={12}
         />
+        <div className="add-recipe__actions">
+          <button type="button" onClick={handleCreateRecipe} disabled={loading}>
+            {loading ? "Creating..." : "Create recipe"}
+          </button>
+          {error && <span className="add-recipe__error">{error}</span>}
+          {success && <span className="add-recipe__success">{success}</span>}
+        </div>
       </form>
 
       <div className="add-recipe__preview">
