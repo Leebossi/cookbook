@@ -65,3 +65,63 @@
 .selected-recipe h3 {
   margin-top: 2rem;
 }
+
+.add-recipe {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.add-recipe h2 {
+  margin-bottom: 0.75rem;
+}
+
+.add-recipe__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-recipe__label {
+  font-weight: 600;
+}
+
+.add-recipe__textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 220px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+  background-color: #1c1c1c;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.add-recipe__preview {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #3a3a3a;
+  background-color: #1b1b1b;
+}
+
+.add-recipe__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.5rem 0 1rem;
+}
+
+.add-recipe__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.add-recipe__empty {
+  opacity: 0.7;
+  font-style: italic;
+}
