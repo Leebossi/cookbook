@@ -15,6 +15,8 @@ type ParsedRecipe = {
   steps: string[];
 };
 
+const DRAFT_STORAGE_KEY = "cookbook_add_recipe_draft";
+
 const parseRecipeInput = (input: string): ParsedRecipe => {
   const lines = input.split(/\r?\n/).map((line) => line.trim());
 
@@ -63,7 +65,9 @@ const parseRecipeInput = (input: string): ParsedRecipe => {
 
 export const AddRecipe = () => {
   const navigate = useNavigate();
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(
+    () => localStorage.getItem(DRAFT_STORAGE_KEY) ?? "",
+  );
   const parsed = useMemo(() => parseRecipeInput(input), [input]);
   const [token, setToken] = useState(() =>
     localStorage.getItem("cookbook_token"),
@@ -80,6 +84,16 @@ export const AddRecipe = () => {
   const handleLogout = () => {
     localStorage.removeItem("cookbook_token");
     setToken(null);
+  };
+
+  const handleClearInput = () => {
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
+    setInput("");
+  };
+
+  const handleInputChange = (value: string) => {
+    setInput(value);
+    localStorage.setItem(DRAFT_STORAGE_KEY, value);
   };
 
   if (!token) {
@@ -153,7 +167,7 @@ export const AddRecipe = () => {
       );
 
       setSuccess("Recipe created.");
-      setInput("");
+      handleClearInput();
     } catch (error) {
       console.error(error);
       setError("Failed to create recipe.");
@@ -168,9 +182,6 @@ export const AddRecipe = () => {
         <h2>Add a Recipe</h2>
         <button type="button" onClick={() => navigate("/")}>
           Go to Home
-        </button>
-        <button type="button" onClick={() => setInput("")}>
-          clear
         </button>
         <button
           type="button"
@@ -194,10 +205,17 @@ export const AddRecipe = () => {
             "Title\n\n- ingredient 1 / amount unit\n- ingredient 2 / amount unit\n\n- instruction step 1\n- instruction step 2"
           }
           value={input}
-          onChange={(event) => setInput(event.target.value)}
+          onChange={(event) => handleInputChange(event.target.value)}
           rows={12}
         />
         <div className="add-recipe__actions">
+          <button
+            type="button"
+            onClick={handleClearInput}
+            className="add-recipe__clear"
+          >
+            clear
+          </button>
           <button type="button" onClick={handleCreateRecipe} disabled={loading}>
             {loading ? "Creating..." : "Create recipe"}
           </button>
