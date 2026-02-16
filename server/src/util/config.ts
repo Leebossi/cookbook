@@ -9,7 +9,9 @@ const config = {
   DB_PASSWORD: process.env.DB_PASSWORD || "",
   DB_NAME: process.env.DB_NAME || "",
   PORT: parseInt(process.env.PORT || "3001"),
-  API_KEY: process.env.API_KEY || ""
+  JWT_SECRET: process.env.JWT_SECRET || "",
+  ADMIN_USERNAME: process.env.ADMIN_USERNAME || "",
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || ""
 };
 
 export default config;

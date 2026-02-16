@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import config from "../util/config";
 
 const getTokenFromRequest = (req: Request): string | null => {
@@ -7,25 +8,25 @@ const getTokenFromRequest = (req: Request): string | null => {
     return authHeader.substring(7).trim();
   }
 
-  const apiKey = req.get("x-api-key");
-  if (apiKey) {
-    return apiKey.trim();
-  }
-
   return null;
 };
 
 const requireAuth = (req: Request, res: Response, next: NextFunction) => {
-  if (!config.API_KEY) {
+  if (!config.JWT_SECRET) {
     return res.status(500).json({ error: "Server authentication is not configured" });
   }
 
   const token = getTokenFromRequest(req);
-  if (!token || token !== config.API_KEY) {
+  if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  return next();
+  try {
+    jwt.verify(token, config.JWT_SECRET);
+    return next();
+  } catch (error) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 };
 
 export default requireAuth;
