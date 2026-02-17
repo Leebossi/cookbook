@@ -3,12 +3,13 @@ import axios from "axios";
 import "./App.css";
 import RecipeSearch from "./components/RecipeSearch";
 import type { Recipe } from "./types/recipe";
-import { Outlet, useNavigate } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const isLoggedIn = Boolean(localStorage.getItem("cookbook_token"));
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -31,6 +32,7 @@ function App() {
 
   return (
     <div className="app">
+      {isLoggedIn && <Link to="/add" className="add-recipe-link">Add Recipe</Link>}
       <h1>Recipes</h1>
       {error && <p className="error">{error}</p>}
       <RecipeSearch recipes={recipes} onSelect={handleSelectRecipe} />
